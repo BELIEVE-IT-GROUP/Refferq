@@ -1,15 +1,17 @@
-import { Resend } from 'resend';
+import { UseSend } from 'usesend-js';
 
-// Initialize Resend with API key only when needed (server-side)
-let resendInstance: Resend | null = null;
+// Initialize useSend with API key only when needed (server-side).
+// BELIEVE: swapped from the Resend SaaS SDK to useSend (self-hosted,
+// Resend-API-compatible) so email doesn't depend on a third-party account.
+let resendInstance: UseSend | null = null;
 
-function getResendClient(): Resend {
+function getResendClient(): UseSend {
   if (!resendInstance) {
-    const apiKey = process.env.RESEND_API_KEY;
+    const apiKey = process.env.USESEND_API_KEY;
     if (!apiKey) {
-      throw new Error('RESEND_API_KEY environment variable is not set');
+      throw new Error('USESEND_API_KEY environment variable is not set');
     }
-    resendInstance = new Resend(apiKey);
+    resendInstance = new UseSend(apiKey, process.env.USESEND_BASE_URL);
   }
   return resendInstance;
 }
@@ -129,8 +131,8 @@ class EmailService {
     html: string;
   }): Promise<{ success: boolean; message: string }> {
     try {
-      const { Resend } = await import('resend');
-      const resend = new Resend(process.env.RESEND_API_KEY);
+      const { UseSend } = await import('usesend-js');
+      const resend = new UseSend(process.env.USESEND_API_KEY, process.env.USESEND_BASE_URL);
 
       const result = await resend.emails.send({
         from: this.defaultFrom,
@@ -882,8 +884,8 @@ class EmailService {
 
   async sendCustomEmail(to: string, subject: string, html: string): Promise<{ success: boolean; message: string }> {
     try {
-      const { Resend } = await import('resend');
-      const resend = new Resend(process.env.RESEND_API_KEY);
+      const { UseSend } = await import('usesend-js');
+      const resend = new UseSend(process.env.USESEND_API_KEY, process.env.USESEND_BASE_URL);
       const result = await resend.emails.send({
         from: this.defaultFrom,
         to,
