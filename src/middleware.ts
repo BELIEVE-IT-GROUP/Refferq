@@ -2,6 +2,13 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { jwtVerify } from 'jose';
 
+// BELIEVE: NextResponse.next({request:{headers}}) silently failed to
+// forward x-user-id/x-user-role to route handlers under the default Edge
+// Runtime in this self-hosted/Turbopack build (every route saw a null
+// header despite a verified JWT). Forcing the Node.js middleware runtime
+// fixes it.
+export const runtime = 'nodejs';
+
 const JWT_SECRET = new TextEncoder().encode(
     process.env.JWT_SECRET!
 );
