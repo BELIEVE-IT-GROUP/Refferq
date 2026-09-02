@@ -85,7 +85,7 @@ export interface CommissionNotificationData {
 }
 
 class EmailService {
-  private defaultFrom = process.env.RESEND_FROM_EMAIL || 'Refferq <noreply@refferq.com>';
+  private defaultFrom = process.env.EMAIL_FROM_ADDRESS || 'Refferq <noreply@refferq.com>';
 
   /** Escape HTML special characters to prevent XSS in email templates */
   private escapeHtml(str: string): string {
