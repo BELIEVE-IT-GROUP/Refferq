@@ -1,0 +1,25 @@
+package.json
+  s_e0ec7d125a3991::t_00bc1f554cd36a 90
+src/lib/email.ts
+  s_e0ec7d125a3991::t_856b528cd851ac 1,3-6,8,10,12,14
+  s_e0ec7d125a3991::t_2401f3e8098e5b 134-135
+  s_e0ec7d125a3991::t_026c93aa1e3184 887-888
+package-lock.json
+  s_e0ec7d125a3991::t_dedf5026af7e1c 67,7407-7416
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "0d83d5c27bbae00135f0055ea9b01a299447202d",
+  "prompts": {},
+  "sessions": {
+    "s_e0ec7d125a3991": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4ebb6d34-fdbe-4305-8321-682ac911b688",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jbelieve <jorge@believe-global.com>"
+    }
+  }
+}
