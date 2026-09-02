@@ -32,6 +32,7 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/login', request.url));
     }
 
+    console.log('[BELIEVE-DEBUG] JWT_SECRET len at runtime:', (process.env.JWT_SECRET || '').length);
     try {
         // 3. Verify JWT
         const { payload } = await jwtVerify(token, JWT_SECRET);
