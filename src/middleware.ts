@@ -32,7 +32,6 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/login', request.url));
     }
 
-    console.log('[BELIEVE-DEBUG] JWT_SECRET len at runtime:', (process.env.JWT_SECRET || '').length);
     try {
         // 3. Verify JWT
         const { payload } = await jwtVerify(token, JWT_SECRET);
@@ -59,12 +58,25 @@ export async function middleware(request: NextRequest) {
             return NextResponse.redirect(new URL('/login', request.url));
         }
 
-        // 5. Inject user info into headers for API usage (optional but helpful)
-        const response = NextResponse.next();
-        response.headers.set('x-user-id', payload.userId as string);
-        response.headers.set('x-user-role', userRole);
+        // 5. Inject user info into headers for API usage
+        //
+        // BELIEVE: setting headers on the NextResponse.next() object only
+        // affects the response the BROWSER sees, not the request forwarded
+        // to the route handler -- request.headers.get('x-user-id') in every
+        // API route always read null, which every route's catch block
+        // turned into a generic 401 "Invalid or expired token", making a
+        // correctly verified login look like a broken one. Fix: pass the
+        // extra headers via NextResponse.next({ request: { headers } }),
+        // the documented way to forward request headers downstream.
+        const requestHeaders = new Headers(request.headers);
+        requestHeaders.set('x-user-id', payload.userId as string);
+        requestHeaders.set('x-user-role', userRole);
 
-        return response;
+        return NextResponse.next({
+            request: {
+                headers: requestHeaders,
+            },
+        });
     } catch (error) {
         if (pathname.startsWith('/api/')) {
             return NextResponse.json(
