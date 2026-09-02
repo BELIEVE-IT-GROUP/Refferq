@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
     success: true,
     message: 'Email test endpoint is working',
     config: {
-      apiKeyConfigured: !!process.env.RESEND_API_KEY,
+      apiKeyConfigured: !!process.env.USESEND_API_KEY,
       environment: process.env.NODE_ENV,
     },
   });

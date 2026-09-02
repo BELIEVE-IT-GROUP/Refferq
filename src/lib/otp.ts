@@ -78,10 +78,10 @@ export class OTPService {
       });
 
       // Send OTP email
-      const { Resend } = await import('resend');
-      const resendClient = new Resend(process.env.RESEND_API_KEY);
+      const { UseSend } = await import('usesend-js');
+      const resendClient = new UseSend(process.env.USESEND_API_KEY, process.env.USESEND_BASE_URL);
       const emailResult = await resendClient.emails.send({
-        from: process.env.RESEND_FROM_EMAIL!,
+        from: process.env.EMAIL_FROM_ADDRESS!,
         to: email,
         subject: 'Your Login Code',
         html: this.generateOTPEmailTemplate(code, user.name || 'User')
