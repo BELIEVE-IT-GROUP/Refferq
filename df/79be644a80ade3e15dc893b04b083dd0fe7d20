@@ -1,0 +1,19 @@
+src/app/api/auth/me/route.ts
+  s_e0ec7d125a3991::t_8097a5130a0905 7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "df79be644a80ade3e15dc893b04b083dd0fe7d20",
+  "prompts": {},
+  "sessions": {
+    "s_e0ec7d125a3991": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4ebb6d34-fdbe-4305-8321-682ac911b688",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Jbelieve <jorge@believe-global.com>"
+    }
+  }
+}
