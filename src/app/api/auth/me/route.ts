@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma';
 export async function GET(request: NextRequest) {
   try {
     const userId = request.headers.get('x-user-id')!;
+    console.log('[BELIEVE-DEBUG] x-user-id header:', JSON.stringify(userId), 'all headers:', JSON.stringify([...request.headers.keys()]));
 
     // Get user from database to ensure they still exist and get latest data
 
