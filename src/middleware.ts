@@ -2,13 +2,6 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { jwtVerify } from 'jose';
 
-// BELIEVE: NextResponse.next({request:{headers}}) silently failed to
-// forward x-user-id/x-user-role to route handlers under the default Edge
-// Runtime in this self-hosted/Turbopack build (every route saw a null
-// header despite a verified JWT). Forcing the Node.js middleware runtime
-// fixes it.
-export const runtime = 'nodejs';
-
 const JWT_SECRET = new TextEncoder().encode(
     process.env.JWT_SECRET!
 );
@@ -65,25 +58,14 @@ export async function middleware(request: NextRequest) {
             return NextResponse.redirect(new URL('/login', request.url));
         }
 
-        // 5. Inject user info into headers for API usage
-        //
-        // BELIEVE: setting headers on the NextResponse.next() object only
-        // affects the response the BROWSER sees, not the request forwarded
-        // to the route handler -- request.headers.get('x-user-id') in every
-        // API route always read null, which every route's catch block
-        // turned into a generic 401 "Invalid or expired token", making a
-        // correctly verified login look like a broken one. Fix: pass the
-        // extra headers via NextResponse.next({ request: { headers } }),
-        // the documented way to forward request headers downstream.
-        const requestHeaders = new Headers(request.headers);
-        requestHeaders.set('x-user-id', payload.userId as string);
-        requestHeaders.set('x-user-role', userRole);
-
-        return NextResponse.next({
-            request: {
-                headers: requestHeaders,
-            },
-        });
+        // BELIEVE: middleware only gates here. Route handlers read the user
+        // straight from the auth-token cookie via getAuthFromRequest()
+        // (src/lib/auth-request.ts) instead of an x-user-id header --
+        // NextResponse.next({request:{headers}}) does not forward custom
+        // headers to the route handler in this self-hosted/Turbopack build
+        // (tried both Edge and Node.js middleware runtimes, same result),
+        // so a header-based handoff here silently loses the value.
+        return NextResponse.next();
     } catch (error) {
         if (pathname.startsWith('/api/')) {
             return NextResponse.json(

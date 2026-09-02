@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import * as crypto from 'crypto';
+import { getAuthFromRequest } from '@/lib/auth-request';
 
 /**
  * POST /api/admin/integration/generate-key - Generate API keys for tracking
  */
 export async function POST(request: NextRequest) {
   try {
-    const userId = request.headers.get('x-user-id')!;
+    const userId = (await getAuthFromRequest(request))!.userId;
     
     // Get user from database
     const user = await prisma.user.findUnique({

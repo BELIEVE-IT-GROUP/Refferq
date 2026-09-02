@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { resend } from '@/lib/email';
+import { getAuthFromRequest } from '@/lib/auth-request';
 
 async function verifyAdmin(request: NextRequest) {
   try {
-    const userId = request.headers.get('x-user-id');
+    const userId = (await getAuthFromRequest(request))?.userId!;
     if (!userId) return null;
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user || user.role !== 'ADMIN') return null;

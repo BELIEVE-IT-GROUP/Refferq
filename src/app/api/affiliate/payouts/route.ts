@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getAuthFromRequest } from '@/lib/auth-request';
 
 export async function GET(request: NextRequest) {
   try {
-    const userId = request.headers.get('x-user-id')!;
+    const userId = (await getAuthFromRequest(request))!.userId;
     
     // Get user from database
     const user = await prisma.user.findUnique({

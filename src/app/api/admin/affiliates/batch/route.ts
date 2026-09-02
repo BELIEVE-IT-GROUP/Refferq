@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { UserStatus } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
+import { getAuthFromRequest } from '@/lib/auth-request';
 
 
 // Batch update affiliates
 export async function POST(request: NextRequest) {
   try {
-    const userId = request.headers.get('x-user-id')!;
+    const userId = (await getAuthFromRequest(request))!.userId;
     
     const user = await prisma.user.findUnique({
       where: { id: userId }

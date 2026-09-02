@@ -1,10 +1,11 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getAuthFromRequest } from '@/lib/auth-request';
 
 
-async function verifyAuth(request: Request) {
+async function verifyAuth(request: NextRequest) {
   try {
-    const userId = request.headers.get('x-user-id');
+    const userId = (await getAuthFromRequest(request))?.userId!;
     if (!userId) return null;
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user || user.role !== 'ADMIN') return null;
@@ -15,7 +16,7 @@ async function verifyAuth(request: Request) {
 }
 
 // GET - Fetch all email templates
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
     const user = await verifyAuth(request);
 
@@ -74,7 +75,7 @@ export async function GET(request: Request) {
 }
 
 // POST - Create or update email template
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const user = await verifyAuth(request);
 
@@ -155,7 +156,7 @@ export async function POST(request: Request) {
 }
 
 // PUT - Toggle template active status
-export async function PUT(request: Request) {
+export async function PUT(request: NextRequest) {
   try {
     const user = await verifyAuth(request);
 
@@ -198,7 +199,7 @@ export async function PUT(request: Request) {
 }
 
 // DELETE - Delete template
-export async function DELETE(request: Request) {
+export async function DELETE(request: NextRequest) {
   try {
     const user = await verifyAuth(request);
 

@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getAuthFromRequest } from '@/lib/auth-request';
 
 export async function GET(request: NextRequest) {
   try {
-    const userId = request.headers.get('x-user-id')!;
-    console.log('[BELIEVE-DEBUG] x-user-id header:', JSON.stringify(userId), 'all headers:', JSON.stringify([...request.headers.keys()]));
+    const userId = (await getAuthFromRequest(request))!.userId;
 
     // Get user from database to ensure they still exist and get latest data
 

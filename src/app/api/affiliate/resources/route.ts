@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getAuthFromRequest } from '@/lib/auth-request';
 
 // GET: List active resources for affiliates
 export async function GET(request: NextRequest) {
   try {
-    const userId = request.headers.get('x-user-id')!;
+    const userId = (await getAuthFromRequest(request))!.userId;
     const user = await prisma.user.findUnique({
       where: { id: userId },
     });
@@ -43,7 +44,7 @@ export async function GET(request: NextRequest) {
 // POST: Track download (increment counter)
 export async function POST(request: NextRequest) {
   try {
-    const userId = request.headers.get('x-user-id')!;
+    const userId = (await getAuthFromRequest(request))!.userId;
     const user = await prisma.user.findUnique({
       where: { id: userId },
     });

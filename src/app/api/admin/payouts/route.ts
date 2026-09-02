@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { logAuditAction } from '@/lib/audit';
+import { getAuthFromRequest } from '@/lib/auth-request';
 
 
 interface JWTPayload {
@@ -13,7 +14,7 @@ interface JWTPayload {
 // Helper: Verify admin auth from DB (middleware already checked role, but we double check status)
 async function verifyAdmin(request: NextRequest) {
   try {
-    const userId = request.headers.get('x-user-id');
+    const userId = (await getAuthFromRequest(request))?.userId!;
     if (!userId) return { error: 'Unauthorized', status: 401 };
 
     const user = await prisma.user.findUnique({

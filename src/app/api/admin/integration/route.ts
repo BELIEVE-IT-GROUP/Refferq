@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getAuthFromRequest } from '@/lib/auth-request';
 
 /**
  * GET /api/admin/integration - Get integration settings
  */
 export async function GET(request: NextRequest) {
   try {
-    const userId = request.headers.get('x-user-id')!;
+    const userId = (await getAuthFromRequest(request))!.userId;
     
     // Get user from database
     const user = await prisma.user.findUnique({
@@ -59,7 +60,7 @@ export async function GET(request: NextRequest) {
  */
 export async function PUT(request: NextRequest) {
   try {
-    const userId = request.headers.get('x-user-id')!;
+    const userId = (await getAuthFromRequest(request))!.userId;
     
     // Get user from database
     const user = await prisma.user.findUnique({

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import crypto from 'crypto';
 import { AVAILABLE_EVENTS, triggerWebhook, type WebhookEventType } from '@/lib/webhooks';
+import { getAuthFromRequest } from '@/lib/auth-request';
 
 
 // ─── SSRF Protection: Validate webhook URLs ────────────────────
@@ -67,7 +68,7 @@ function validateWebhookUrl(urlString: string): { valid: boolean; error?: string
 // Helper: Verify admin auth
 async function verifyAdminAuth(request: NextRequest) {
   try {
-    const userId = request.headers.get('x-user-id')!;
+    const userId = (await getAuthFromRequest(request))!.userId;
     
     const user = await prisma.user.findUnique({
       where: { id: userId }

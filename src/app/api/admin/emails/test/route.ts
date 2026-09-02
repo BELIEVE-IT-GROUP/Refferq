@@ -1,11 +1,12 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { emailService } from '@/lib/email';
+import { getAuthFromRequest } from '@/lib/auth-request';
 
 
-async function verifyAuth(request: Request) {
+async function verifyAuth(request: NextRequest) {
   try {
-    const userId = request.headers.get('x-user-id');
+    const userId = (await getAuthFromRequest(request))?.userId!;
     if (!userId) return null;
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user || user.role !== 'ADMIN') return null;
@@ -16,7 +17,7 @@ async function verifyAuth(request: Request) {
 }
 
 // POST - Send test email
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const user = await verifyAuth(request);
 
